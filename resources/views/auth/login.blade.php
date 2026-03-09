@@ -1,47 +1,75 @@
 <x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
+<div class="auth-wrapper">
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+    {{-- ══ PAINEL ESQUERDO (imagem) ══ --}}
+    <div class="auth-visual">
+
+        {{-- Descomente quando tiver a imagem:
+        <img src="{{ asset('images/login-bg.jpg') }}" alt=""> --}}
+
+        <div class="auth-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width=".8"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            <p>Sua imagem aqui</p>
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+        <div class="auth-visual-overlay"></div>
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
+        <div class="auth-caption">
+            <h2>Bem-vindo<br>de <em>volta.</em></h2>
+        </div>
+    </div>
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+    {{-- ══ PAINEL DIREITO (formulário) ══ --}}
+    <div class="auth-form-panel">
+
+        <div class="auth-header">
+            <p class="auth-eyebrow">Acesso</p>
+            <h1 class="auth-title">Entrar na conta</h1>
         </div>
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-            </label>
+        <div class="auth-status">
+            <x-auth-session-status class="mb-4" :status="session('status')" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
+        <form method="POST" action="{{ route('login') }}">
+            @csrf
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
+            <div class="auth-field">
+                <x-input-label for="email" :value="__('Email')" />
+                <x-text-input id="email" type="email" name="email"
+                    :value="old('email')" placeholder="seu@email.com"
+                    required autofocus autocomplete="username" />
+                <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            </div>
+
+            <div class="auth-field">
+                <x-input-label for="password" :value="__('Senha')" />
+                <x-text-input id="password" type="password" name="password"
+                    placeholder="••••••••"
+                    required autocomplete="current-password" />
+                <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            </div>
+
+            <div class="auth-links">
+                @if (Route::has('password.request'))
+                    <a href="{{ route('password.request') }}">Esqueci a senha</a>
+                @endif
+                @if (Route::has('register'))
+                    <a href="{{ route('register') }}">Cadastrar-se</a>
+                @endif
+            </div>
+
+            <button type="submit" class="auth-btn">Logar</button>
+
+        </form>
+    </div>
+
+</div>
+
 </x-guest-layout>
