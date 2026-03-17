@@ -163,4 +163,16 @@
         }
     </style>
 
+    <script>
+        setInterval(function () {
+            fetch('/room-requests/status')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.aprovado) {
+                        window.location.href = "{{ route('dashboard') }}";
+                    }
+                });
+        }, 5000); // checa a cada 5 segundos
+    </script>
+
 </x-guest-layout>

@@ -11,6 +11,27 @@ Route::get('/aguardando', function () {
     return view('auth.aguardando');
     })->middleware('auth')->name('aguardando');
 
+Route::get('/room-requests/status', function () {
+    $aprovado = \App\Models\RoomRequest::where('user_id', auth()->id())
+        ->where('status', 'aprovado')
+        ->exists();
+
+    return response()->json(['aprovado' => $aprovado]);
+})->middleware('auth')->name('room-requests.status');
+
+Route::get('/room-requests/pendentes', function () {
+    $pendentes = \App\Models\RoomRequest::with('user')
+        ->whereHas('room', function($q) {
+            $q->whereHas('users', function($q2) {
+                $q2->where('users.id', auth()->id());
+            });
+        })
+        ->where('status', 'pendente')
+        ->get();
+
+    return response()->json($pendentes);
+})->middleware('auth')->name('room-requests.pendentes');
+
 Route::get('/dashboard', [TaskController::class, 'ListTasksDashboard'])
     ->middleware(['auth', 'verified', 'room.aprovado'])
     ->name('dashboard');

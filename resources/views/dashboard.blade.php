@@ -352,4 +352,64 @@
     </div>
 </div>
 
+    @if(auth()->user()->function === 'scrum master')
+    <script>
+        setInterval(function () {
+            fetch('/room-requests/pendentes')
+                .then(res => res.json())
+                .then(data => {
+                    const badge = document.querySelector('.notif-badge');
+                    const count = document.querySelector('.notif-count');
+                    const list = document.querySelector('.notif-list');
+
+                    // Atualiza contadores
+                    if (count) count.textContent = data.length;
+
+                    // Atualiza badge
+                    if (data.length > 0) {
+                        if (badge) {
+                            badge.textContent = data.length;
+                            badge.style.display = '';
+                        } else {
+                            const btn = document.getElementById('notifBtn');
+                            const span = document.createElement('span');
+                            span.className = 'notif-badge';
+                            span.textContent = data.length;
+                            btn.appendChild(span);
+                        }
+                    } else {
+                        if (badge) badge.style.display = 'none';
+                    }
+
+                    // Atualiza lista do dropdown
+                    if (list) {
+                        if (data.length === 0) {
+                            list.innerHTML = '<div class="notif-empty">Nenhuma solicitação pendente</div>';
+                        } else {
+                            list.innerHTML = data.map(pendente => `
+                            <div class="notif-item">
+                                <div class="notif-avatar">${pendente.user.name.charAt(0).toUpperCase()}</div>
+                                <div class="notif-info">
+                                    <div class="notif-name">${pendente.user.name}</div>
+                                    <div class="notif-role">${pendente.user.function}</div>
+                                </div>
+                                <div class="notif-actions">
+                                    <form method="POST" action="/room-requests/${pendente.id}/aprovar">
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="notif-btn-aprovar" title="Aprovar">✓</button>
+                                    </form>
+                                    <form method="POST" action="/room-requests/${pendente.id}/recusar">
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="notif-btn-recusar" title="Recusar">✕</button>
+                                    </form>
+                                </div>
+                            </div>
+                        `).join('');
+                        }
+                    }
+                });
+        }, 5000);
+    </script>
+    @endif
+
 </x-app-layout>
